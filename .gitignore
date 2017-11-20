@@ -1,0 +1,9 @@
+.gradle/
+.idea/
+build/
+out/
+
+*.jar
+!gradle-wrapper.jar
+
+gradle/project-schema.json
