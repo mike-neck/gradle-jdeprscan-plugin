@@ -15,6 +15,8 @@
  */
 package org.mikeneck.jdeprscan
 
+import com.natpryce.hamkrest.Matcher
+import com.natpryce.hamkrest.contains
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
 import java.nio.file.Files
@@ -42,4 +44,4 @@ fun Path.gradle(vararg commands: String): BuildResult = GradleRunner.create()
 @Suppress("unused")
 val Any.unit: Unit get() = Unit
 
-
+fun contains(pattern: String): Matcher<String> = contains(Regex(pattern))

@@ -15,6 +15,9 @@
  */
 package org.mikeneck.jdeprscan
 
+import com.natpryce.hamkrest.and
+import com.natpryce.hamkrest.assertion.assertThat
+import com.natpryce.hamkrest.equalTo
 import org.gradle.testkit.runner.TaskOutcome
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.given
@@ -66,11 +69,10 @@ object JdeprscanPluginSpec: Spek({
             val result = gradleProject.gradle("compileJava", "jdeprscan")
             it("report file will be created") {
                 val reportFile = gradleProject.resolve("build/jdeprscan/report.txt")
-                println(result.output)
-                println(result.tasks.map { it.path })
-                println(result.task("jdeprscan")?.outcome == TaskOutcome.SUCCESS)
-                println(Files.exists(reportFile))
-                println(reportFile.contents)
+
+                assertThat(Files.exists(reportFile), equalTo(true))
+                assertThat(reportFile.contents, contains("class sample/Sample") and contains("java/util/Date::<init>"))
+                assertThat(result.task(":jdeprscan")?.outcome, equalTo(TaskOutcome.SUCCESS))
             }
         }
     }

@@ -17,6 +17,7 @@ dependencies {
     implementation("org.zeroturnaround:zt-exec:1.10")
     implementation("org.jetbrains:annotations:13.0")
     testImplementation(gradleTestKit())
+    testImplementation("com.natpryce:hamkrest:1.4.2.2")
     testImplementation(kotlin(module = "stdlib-jre8", version = "1.1.60"))
     testImplementation(kotlin(module = "reflect", version = "1.1.60"))
 }
