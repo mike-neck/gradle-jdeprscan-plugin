@@ -13,7 +13,6 @@ repositories {
 }
 
 dependencies {
-    api("org.apache.maven.plugins:maven-jdeprscan-plugin:3.0.0-alpha-1")
     api(gradleApi())
     implementation("org.zeroturnaround:zt-exec:1.10")
     implementation("org.jetbrains:annotations:13.0")
