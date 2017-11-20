@@ -60,9 +60,10 @@ public class JdeprscanParameterBuilder {
             return destinationDirs -> new JdeprscanParameter(Collections.unmodifiableList(options));
         }
     }
+
+    interface WithDestination {
+
+        JdeprscanParameter withDestination(final FileCollection destinationDirs);
+    }
 }
 
-interface WithDestination {
-
-    JdeprscanParameter withDestination(final FileCollection destinationDirs);
-}
