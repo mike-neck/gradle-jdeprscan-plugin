@@ -22,6 +22,8 @@ import org.gradle.testkit.runner.GradleRunner
 import java.nio.file.Files
 import java.nio.file.Path
 
+fun gradleProject(): Path = Files.createTempDirectory("jdeprscan-plugin-test")
+
 var Path.contents: String 
     get() = Files.readAllLines(this).joinToString("\n")
     set(contents) = when (Files.exists(this.parent)) {
@@ -34,6 +36,8 @@ var Path.contents: String
 var Path.buildGradle: String
     get() = Files.readAllLines(this.resolve("build.gradle")).joinToString("\n")
     set(text) = Files.write(this.resolve("build.gradle"), text.toByteArray(Charsets.UTF_8)).unit
+
+fun Path.file(path: String) = this.resolve(path)
 
 fun Path.gradle(vararg commands: String): BuildResult = GradleRunner.create()
         .withProjectDir(this.toFile())

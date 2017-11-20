@@ -7,3 +7,5 @@ out/
 !gradle-wrapper.jar
 
 gradle/project-schema.json
+
+src/test/resources/java.home.properties

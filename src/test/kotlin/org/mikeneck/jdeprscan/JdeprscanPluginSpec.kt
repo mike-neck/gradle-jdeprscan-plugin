@@ -24,11 +24,12 @@ import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.api.dsl.on
 import java.nio.file.Files
+import java.nio.file.Path
 
 object JdeprscanPluginSpec: Spek({
 
     given("apply org.mikeneck.gradle-jdeprscan-plugin") {
-        val gradleProject = Files.createTempDirectory("jdeprscan-plugin-test")
+        val gradleProject = gradleProject()
 
         gradleProject.buildGradle = """
             plugins {
@@ -43,7 +44,56 @@ object JdeprscanPluginSpec: Spek({
             }
         """.trimIndent()
 
-        gradleProject.resolve("src/main/java/sample/Sample.java").contents = """
+        gradleProject.createJavaFile()
+
+        on("calling jdeprscan task after compileJava") {
+            val result = gradleProject.gradle("compileJava", "jdeprscan")
+            it("report file will be created") {
+                val reportFile = gradleProject.file("build/jdeprscan/report.txt")
+
+                assertThat(Files.exists(reportFile), equalTo(true))
+                assertThat(reportFile.contents, contains("class sample/Sample") and contains("java/util/Date::<init>"))
+                assertThat(result.task(":jdeprscan")?.outcome, equalTo(TaskOutcome.SUCCESS))
+            }
+        }
+    }
+
+    given("apply org.mikenec.gradle-jdeprscan-plugin with Java9 home") {
+        val gradleProject = gradleProject()
+
+        gradleProject.buildGradle = """
+            plugins {
+                id 'org.mikeneck.gradle-jdeprscan-plugin'
+                id 'java'
+            }
+            repositories {
+                mavenCentral()
+            }
+            dependencies {
+                compile 'junit:junit:4.12'
+            }
+            jdeprscan {
+                javaHome = '${JavaHome.java9}'
+            }
+        """.trimIndent()
+
+        gradleProject.createJavaFile()
+
+        on("calling jdeprscan task after compileJava") {
+            val result = gradleProject.gradle("compileJava", "jdeprscan")
+            it("will run jdeprscan task") {
+                val reportFile = gradleProject.file("build/jdeprscan/report.txt")
+
+                assertThat(Files.exists(reportFile), equalTo(true))
+                assertThat(reportFile.contents, contains("class sample/Sample") and contains("java/util/Date::<init>"))
+                assertThat(result.task(":jdeprscan")?.outcome, equalTo(TaskOutcome.SUCCESS))
+            }
+        }
+    }
+})
+
+private fun Path.createJavaFile() {
+    this.file("src/main/java/sample/Sample.java").contents = """
             package sample;
             import java.util.Date;
             import java.lang.reflect.Method;
@@ -64,16 +114,4 @@ object JdeprscanPluginSpec: Spek({
                 }
             }
         """.trimIndent()
-
-        on("calling jdeprscan task after compileJava") {
-            val result = gradleProject.gradle("compileJava", "jdeprscan")
-            it("report file will be created") {
-                val reportFile = gradleProject.resolve("build/jdeprscan/report.txt")
-
-                assertThat(Files.exists(reportFile), equalTo(true))
-                assertThat(reportFile.contents, contains("class sample/Sample") and contains("java/util/Date::<init>"))
-                assertThat(result.task(":jdeprscan")?.outcome, equalTo(TaskOutcome.SUCCESS))
-            }
-        }
-    }
-})
+}
