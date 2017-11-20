@@ -19,6 +19,7 @@ import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.jetbrains.annotations.NotNull;
 import org.mikeneck.jdeprscan.impl.DefaultJdeprscanExtension;
+import org.mikeneck.jdeprscan.impl.JavaProject;
 
 public class JdeprscanPlugin implements Plugin<Project> {
 
@@ -29,6 +30,7 @@ public class JdeprscanPlugin implements Plugin<Project> {
 
         project.getTasks().create(JdeprscanTask.TASK_NAME, JdeprscanTask.class, task -> {
             task.setJdeprscanExtension(jdeprscanExtension);
+            task.setThisProject(new JavaProject(project));
             task.setGroup("Help");
             task.setDescription("Runs jdeprscan command detecting a uses of deprecated API.");
         });

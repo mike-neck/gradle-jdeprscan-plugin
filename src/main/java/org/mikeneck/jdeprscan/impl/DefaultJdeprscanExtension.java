@@ -42,6 +42,11 @@ public class DefaultJdeprscanExtension implements JdeprscanExtension {
     }
 
     @Override
+    public Project getProject() {
+        return project;
+    }
+
+    @Override
     public Property<Boolean> getListOption() {
         return listOption;
     }

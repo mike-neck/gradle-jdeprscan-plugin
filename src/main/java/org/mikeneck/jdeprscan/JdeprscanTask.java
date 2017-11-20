@@ -16,37 +16,43 @@
 package org.mikeneck.jdeprscan;
 
 import org.gradle.api.DefaultTask;
+import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.TaskAction;
-import org.mikeneck.jdeprscan.impl.JavaProject;
 
-import java.io.File;
 import java.io.IOException;
 
 public class JdeprscanTask extends DefaultTask {
 
     static final String TASK_NAME = "jdeprscan";
 
-    private JdeprscanExtension jdeprscanExtension;
+    private final Property<LanguageProject> thisProject = getProject().getObjects().property(LanguageProject.class);
+
+    private final Property<JdeprscanExtension> jdeprscanExtension = getProject().getObjects().property(JdeprscanExtension.class);
+
+    @SuppressWarnings("WeakerAccess")
+    public void setThisProject(final LanguageProject thisProject) {
+        this.thisProject.set(thisProject);
+    }
 
     void setJdeprscanExtension(final JdeprscanExtension jdeprscanExtension) {
-        this.jdeprscanExtension = jdeprscanExtension;
+        this.jdeprscanExtension.set(jdeprscanExtension);
     }
 
     @SuppressWarnings("unused")
     @TaskAction
     public void runJdeprscan() {
-        final LanguageProject thisProject = new JavaProject(getProject());
-
-        final Jdeprscan jdeprscan = jdeprscanExtension.getJdeprscan();
-        jdeprscan.validate();
-        final JdeprscanParameter parameter = jdeprscanExtension.getOption()
-                .withClasspath(thisProject.getClasspath())
-                .withDestination(thisProject.getDestinationDirs());
+        final JdeprscanExtension extension = jdeprscanExtension.get();
+        final LanguageProject project = thisProject.get();
+        
+        final Jdeprscan jdeprscan = extension.getJdeprscan();
+        final JdeprscanParameter parameter = extension.getOption()
+                .withClasspath(project.getClasspath())
+                .withDestination(project.getDestinationDirs());
 
         final JdeprscanResult result = jdeprscan.runCommand(parameter);
 
         try {
-            result.writeTo(jdeprscanExtension.getReportFile().map(File::toPath).getOrElse(getProject().file(JdeprscanExtension.DEFAULT_REPORT_FILE).toPath()));
+            result.writeTo(extension.getReportFileAsPath());
         } catch (IOException e) {
             throw new JdeprscanRuntimeException(e);
         }

@@ -15,11 +15,15 @@
  */
 package org.mikeneck.jdeprscan;
 
+import org.gradle.api.Project;
 import org.gradle.api.provider.Property;
 
 import java.io.File;
+import java.nio.file.Path;
 
 public interface JdeprscanExtension {
+
+    Project getProject();
 
     String EXTENSION_NAME = "jdeprscan";
 
@@ -28,7 +32,7 @@ public interface JdeprscanExtension {
     Property<Boolean> getListOption();
 
     default boolean isListOption() {
-        return getListOption().getOrElse(false);
+        return getListOption().getOrElse(LIST_OPTION);
     }
 
     void setListOption(final boolean listOption);
@@ -47,7 +51,9 @@ public interface JdeprscanExtension {
 
     default Jdeprscan getJdeprscan() throws JdeprscanNotFoundException {
         final File javaHome = getJavaHome().getOrNull();
-        return Jdeprscan.fromJavaHome(javaHome);
+        final Jdeprscan jdeprscan = Jdeprscan.fromJavaHome(javaHome);
+        jdeprscan.validate();
+        return jdeprscan;
     }
 
     void setJavaHome(final String java9Home);
@@ -57,6 +63,10 @@ public interface JdeprscanExtension {
     String DEFAULT_REPORT_FILE = "build/jdeprscan/report.txt";
 
     Property<File> getReportFile();
+
+    default Path getReportFileAsPath() {
+        return getReportFile().map(File::toPath).getOrElse(getProject().file(DEFAULT_REPORT_FILE).toPath());
+    }
 
     void setReportFile(final File reportFile);
 
