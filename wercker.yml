@@ -11,7 +11,7 @@ build:
     - script:
       name: run all tests
       code: |
-        ./gradlew --full-stacktrace -q test
+        ./gradlew --full-stacktrace -q --project-cache-dir=$WERCKER_CACHE_DIR test
     - script:
       name: show result
       code: |
