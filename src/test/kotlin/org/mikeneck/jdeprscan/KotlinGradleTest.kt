@@ -45,6 +45,12 @@ fun Path.gradle(vararg commands: String): BuildResult = GradleRunner.create()
         .withArguments(*commands)
         .build()
 
+fun Path.gradleWillFail(vararg commands: String): BuildResult = GradleRunner.create()
+        .withProjectDir(this.toFile())
+        .withPluginClasspath()
+        .withArguments(*commands)
+        .buildAndFail()
+
 @Suppress("unused")
 val Any.unit: Unit get() = Unit
 

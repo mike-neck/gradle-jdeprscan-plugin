@@ -15,9 +15,11 @@
  */
 package org.mikeneck.jdeprscan;
 
+import org.gradle.api.GradleException;
+
 import java.nio.file.Path;
 
-public class JdeprscanNotFoundException extends RuntimeException {
+public class JdeprscanNotFoundException extends GradleException {
 
     JdeprscanNotFoundException() {
         super("JAVA_HOME is not set.");

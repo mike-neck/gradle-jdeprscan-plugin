@@ -90,6 +90,39 @@ object JdeprscanPluginSpec: Spek({
             }
         }
     }
+
+    given("apply org.mikeneck.gradle-jdeprscan-plugin with Java9 home") {
+        val gradleProject = gradleProject()
+
+        gradleProject.buildGradle = """
+            plugins {
+                id 'org.mikeneck.gradle-jdeprscan-plugin'
+                id 'java'
+            }
+            repositories {
+                mavenCentral()
+            }
+            dependencies {
+                compile 'junit:junit:4.12'
+            }
+            jdeprscan {
+                javaHome = '${JavaHome.java8}'
+            }
+        """.trimIndent()
+
+        gradleProject.createJavaFile()
+
+        on("calling jdeprscan task after compileJava") {
+            val result = gradleProject.gradleWillFail("compileJava", "jdeprscan")
+    
+            it("will not run jdeprscan task because of no executable") {
+                val reportFile = gradleProject.file("build/jdeprscan/report.txt")
+    
+                assertThat(Files.exists(reportFile), equalTo(false))
+                assertThat(result.task(":jdeprscan")?.outcome, equalTo(TaskOutcome.FAILED))
+            }
+        }
+    }
 })
 
 private fun Path.createJavaFile() {
