@@ -1,0 +1,18 @@
+box:
+  id: mikeneck/jdk8-and-jdk9-alpine
+
+build:
+  steps:
+    - script:
+      name: create property file
+      code: |
+        echo "java9.home=$JAVA9" >> ./src/test/resources/java.home.properties
+        echo "java8.home=$JAVA8" >> ./src/test/resources/java.home.properties
+    - script:
+      name: run all tests
+      code: |
+        ./gradlew --full-stacktrace -q test
+    - script:
+      name: show result
+      code: |
+        cat ./build/test-results/junit-platform/TEST-spek.xml
