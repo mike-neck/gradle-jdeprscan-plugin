@@ -41,6 +41,10 @@ public class JdeprscanParameterBuilder {
         this.receiveOtherOptions = false;
     }
 
+    public boolean getReceiveOtherOptions() {
+        return receiveOtherOptions;
+    }
+
     static JdeprscanParameterBuilder listOption() {
         return new JdeprscanParameterBuilder(new ListOption());
     }

@@ -41,6 +41,10 @@ public class Jdeprscan {
         }
     }
 
+    Path getPath() {
+        return path;
+    }
+
     static Jdeprscan fromJavaHome(final File javaHome) throws JdeprscanNotFoundException {
         if (javaHome == null) {
             throw new JdeprscanNotFoundException();
