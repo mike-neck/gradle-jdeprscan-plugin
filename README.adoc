@@ -1,0 +1,48 @@
+= Gradle jdeprscan plugin
+
+This plugin runs `jdeprscan` against a classes built by a project. About `jdeprscan` please see the https://docs.oracle.com/javase/9/tools/jdeprscan.htm#JSWOR-GUID-2B7588B0-92DB-4A88-88D4-24D183660A62[document].
+
+== Usage
+
+With gradle-plugin mechanism...
+
+[source, groovy]
+----
+plugins {
+  id "org.mikeneck.gradle-jdeprscan-plugin" version "0.1"
+}
+----
+
+After running compile task on your project, run `jdeprscan` task.
+
+[source, bash]
+----
+./gradlew compileJava jdeprscan
+----
+
+Then report file(its name is `report.txt`) will be generated at `$projectDir/build/jdeprscan` directory.
+
+=== Settings
+
+These settings can be customize via `jdeprscan` block.
+
+* Use of `--list` option via `listOption`
+* `JAVA_HOME` path via `javaHome`
+* Report file via `reportFile`
+
+[source, groovy]
+----
+jdeprscan {
+  // use list option
+  // if set to true, jdeprscan will show list of deprecated APIs, and not inspect classes.
+  listOption = true // boolean, default false.
+
+  // set JAVA_HOME
+  // for the project using Java8, give Java9's home to this.
+  // if this JAVA_HOME points to jdk8 or lower version, jdeprscan task will fail.
+  javaHome = "/usr/lib/jvm/openjdk9/" // String, default the JAVA_HOME running gradle.
+
+  // set the file path of report.
+  reportFile = "deprecated-api-report.txt" // String or File, default `$projectDir/build/jdeprscan/report.txt` 
+}
+----
