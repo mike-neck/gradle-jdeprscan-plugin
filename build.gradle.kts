@@ -1,3 +1,7 @@
+import com.gradle.publish.PluginBundleExtension
+import com.gradle.publish.PluginConfig
+import groovy.lang.Closure
+
 plugins {
     id("java-library")
     id("java-gradle-plugin")
@@ -52,3 +56,24 @@ tasks {
         }
     }
 }
+
+pluginBundle {
+    website = "https://github.com/mike-neck/gradle-jdeprscan-plugin"
+    vcsUrl = "https://github.com/mike-neck/gradle-jdeprscan-plugin"
+    description = "Gradle plugin that scans a use of deprecated APIs in classes built by a project using `jdeprscan` command, which is introduced since jdk9."
+    tags = listOf("inspection", "code quality")
+    version = project.version
+
+    plugins {
+        this.create("jdeprscanPlugin") {
+            id = "org.mikeneck.gradle-jdeprscan-plugin"
+            displayName = "Gradle jdeprscan plugin"
+        }
+    }
+}
+
+fun <D> D.closure(f: D.() -> Unit): Closure<Unit> = object: Closure<Unit>(this) {
+    fun doCall() = this@closure.f()
+}
+
+fun PluginBundleExtension.plugins(configuration: NamedDomainObjectContainer<PluginConfig>.() -> Unit) = this.plugins((this.plugins as NamedDomainObjectContainer<PluginConfig>).closure(configuration))
