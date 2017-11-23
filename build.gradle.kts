@@ -35,26 +35,6 @@ tasks {
         targetCompatibility = "1.8"
         options.encoding = "UTF-8"
     }
-
-    val compileJava = "compileJava"(JavaCompile::class)
-
-    "showClasses" {
-        dependsOn(compileJava)
-        doLast {
-            println(compileJava.classpath.asPath)
-            println(files(compileJava).files)
-        }
-    }
-
-    "showSourceSets" {
-        doLast {
-            println("source sets")
-            project.container(SourceSetContainer::class.java).names.forEach { println(it) }
-
-            println("destination")
-            println(compileJava.destinationDir)
-        }
-    }
 }
 
 pluginBundle {
